@@ -1,5 +1,5 @@
 # HTTPServer
-Project meant to study more about HTTP servers and Python with Tornado framework. This POC downloads a file from the server to the client.
+Project meant to study Python with Tornado framework. This POC is an API that downloads a file in the directory.
 This description will be followed by the steps to install the requirements to run the project in Ubuntu OS.
 
 # Requirements
@@ -42,8 +42,6 @@ You should insert the file in the HTTPServer directory, and to the client downlo
 ```
 localhost:8080/<file_name>
 ```
-Obs: The file name shall not have spaces nor accented characters.
-
 If you don't want to put any other files in the repository, you can give it a try by downloading this README file!
 ```
 localhost:8080/README.md

@@ -23,8 +23,8 @@ class FileDownloadHandler(web.RequestHandler):
 
 if __name__ == "__main__":
     app = web.Application([
-        (r"/([0-9a-zA-Z_.-]+)", FileDownloadHandler)
+        (r"/([0-9a-zA-Z_.% -]+)", FileDownloadHandler)
     ])
     app.listen(8080)
-    ioloop.IOLoop.current().start()
     print("Application started on port 8080")
+    ioloop.IOLoop.current().start()
