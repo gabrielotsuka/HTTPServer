@@ -56,3 +56,9 @@ This POC starts the using of the library socket. Now it will be able to establis
     python3  HelloWorldServer.py
 
 
+## Client-Server
+This POC resumes the behavior of the server and the client when a connection is established and a communication happens. Both codes represents what happening in this image
+
+![plot](./TCPSocket.png)
+
+To run it, first execute the Server.py, it will stop at the Accept step of the server and wait until the Client establishes its connection in the socket that the server is listening. To do that, you can run the Client.py code. If you try to access the socket by a browser, it will finishes the code, because the Server echoes only what the client sends to it, and the browser will send nothing.
