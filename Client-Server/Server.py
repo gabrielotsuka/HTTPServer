@@ -1,6 +1,7 @@
 import socket
 
-# Empty string HOST will be able to connect to all available ipv4 interfaces
+# Empty string HOST will be able to connect to all available ipv4 interfaces. Run 'netstat -an' in the terminal
+# after running script to see the difference of the connection established when using 0.0.0.0 
 HOST, PORT = '', 8080
 
 if __name__ == "__main__":

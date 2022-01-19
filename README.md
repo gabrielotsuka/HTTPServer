@@ -61,4 +61,4 @@ This POC resumes the behavior of the server and the client when a connection is 
 
 ![plot](./TCPSocket.png)
 
-To run it, first execute the Server.py, it will stop at the Accept step of the server and wait until the Client establishes its connection in the socket that the server is listening. To do that, you can run the Client.py code. If you try to access the socket by a browser, it will finishes the code, because the Server echoes only what the client sends to it, and the browser will send nothing.
+To run it, first execute the Server.py, it will stop at the Accept step, with a socket on Listen status on the server-side. It will block until the client connects to it, creating a new socket in server-side in status Established peered with corresponding socket on client-side. To create that connection, you can run the Client.py code.
