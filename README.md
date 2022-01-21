@@ -1,5 +1,5 @@
 # HTTPServer
-Project meant to study more about HTTP Servers. The final objective of this study is to be able to create a HTTP Server with an API that downloads a file in some directory of the server. Till that, there will be other simpler side projects described in the next topics:
+Project meant to study more about HTTP Servers. The final objective of this study is to be able to create a HTTP File Server which the browser can download a file stored in the root directory of the server. Till that, there will be other simpler side projects described in the next topics:
 <br /><br />
 
 ### General requirements
@@ -18,9 +18,7 @@ The output should be like this:
 
     Python 3.8.10
 
-When any of the servers is running, you should only have an client to establish connection with it, for example your prefered browser. The host and port configured on the projects will be 
-
-    localhost:8080
+When any of the servers is running, you should only have an client to establish connection with it, for example your prefered browser. The host and port configured on the projects will be localhost:8080
 <br />
 
 ## FrameworkHTTPServer.py
@@ -41,19 +39,17 @@ To start the application, run the following command from inside the HTTPServer d
     python3 FileDownloader.py
 
 You should insert the file in the HTTPServer directory, and the client will download it when it accesses the following URI, changing the file_name to the name of the file with its extension.
-```
-localhost:8080/<file_name>
-```
+
+    localhost:8080/<file_name>
 If you don't want to put any other files in the repository, you can give it a try by downloading this README file!
-```
-localhost:8080/README.md
-```
+
+    localhost:8080/README.md
 <br />
 
 ## HelloWorldServer.py
 This POC starts the using of the library socket. Now it will be able to establish the TCP connection between the server and the client. The client will only receive an Hello World message, and you can try it by running the script and accessing your browser at the correct host and port
 
-    python3  HelloWorldServer.py
+    python3  HelloWorldServer.pyaccess
 
 
 ## Client-Server
@@ -62,3 +58,10 @@ This POC resumes the behavior of the server and the client when a connection is 
 ![plot](./TCPSocket.png)
 
 To run it, first execute the Server.py, it will stop at the Accept step, with a socket on Listen status on the server-side. It will block until the client connects to it, creating a new socket in server-side in status Established peered with corresponding socket on client-side. To create that connection, you can run the Client.py code.
+
+## HTTPServer
+This is the project that achieves the final objective of the study. Using sockets, the server has the same behaviors than the FrameworkHTTPServer.py. To run and test it, you should run the following command inside the , and access localhost:8080/<file_name.ext> to download the file in the root of this project.
+
+```
+python3 HTTPServer.py
+```

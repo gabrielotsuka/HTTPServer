@@ -2,14 +2,23 @@ from logging import exception
 import socket
 
 # PORT < 1024 can require superuser permissions.
-HOST, PORT = '127.0.0.1', 8080
+HOST, PORT = '', 8080
 
-def buildResponse():
-    return b"""\
+def buildMessageWithStandartHeader(message):
+    response = f"""\
 HTTP/1.1 200 OK
 
-Hello world
-            """
+{message}
+"""
+    return bytearray(response, 'utf-8')
+
+def buildResponse(fileName):
+    response = f"""\
+HTTP/1.1 200 OK
+Content-Disposition: attachment; filename="{fileName}"
+
+"""
+    return bytearray(response, 'utf-8')
 
 if __name__ == "__main__":
     # TCP connection configuration. AF_INET refers to ipv4 and SOCK_STREAM is the TCP connection
@@ -18,21 +27,26 @@ if __name__ == "__main__":
     listenSocket.listen(1)
     print('Serving HTTP on port ' + str(PORT))
 
-    while True:    
+    while True:
         clientConnection, clientAddress = listenSocket.accept()
         with clientConnection: # As it uses with statement, it's not necessary to call clientConnection.close()
             requestData = clientConnection.recv(4096).decode('utf-8')
             fileName = requestData[5:requestData.find("HTTP/1.1")-1]
             if fileName != 'favicon.ico':
                 if fileName == '':
-                    print('Invalid Path URL. Please insert a path in the following format: localhost:' + str(PORT) + '/<file_name.ext>')
-                    clientConnection.sendall(buildResponse())
+                    message = 'Invalid URL. Please insert a path according to the following format\nlocalhost:' + str(PORT) + '/<file_name.ext>'
+                    clientConnection.sendall(buildMessageWithStandartHeader(message))
                     continue
                 try:
-                    with open(fileName, 'rb') as f:
-                        file = f.read()
-                        print('cheguei aqui')
-                except FileNotFoundError:
-                    print('File ' + fileName + ' not found')
+                    file = open(fileName, 'rb')
+                    fileSize = len(file.read())
+                    file.close()
+                    clientConnection.sendall(buildResponse(fileName))
 
-            clientConnection.sendall(buildResponse())
+                    f = open(fileName,'rb')
+                    content = f.read()
+                    clientConnection.sendall(content)
+
+                except FileNotFoundError:
+                    message = 'File "' + fileName + '" not found in the root of the project'
+                    clientConnection.sendall(buildMessageWithStandartHeader(message))
