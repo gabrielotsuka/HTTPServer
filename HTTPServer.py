@@ -4,20 +4,15 @@ import socket
 # PORT < 1024 can require superuser permissions.
 HOST, PORT = '', 8080
 
-def buildMessageWithStandartHeader(message):
-    response = f"""\
-HTTP/1.1 200 OK
+H1 = 'HTTP/1.1 200 OK'
+HCT = 'Content-Disposition: attachment; filename='
 
-{message}
-"""
+def buildErrorMessage(message):
+    response = f"\n{H1}\n\n{message}\n"
     return bytearray(response, 'utf-8')
 
-def buildResponse(fileName):
-    response = f"""\
-HTTP/1.1 200 OK
-Content-Disposition: attachment; filename="{fileName}"
-
-"""
+def buildHeadersForDownload(fileName):
+    response = f"\n{H1}\n{HCT}{fileName}\n\n"
     return bytearray(response, 'utf-8')
 
 if __name__ == "__main__":
@@ -35,13 +30,13 @@ if __name__ == "__main__":
             if fileName != 'favicon.ico':
                 if fileName == '':
                     message = 'Invalid URL. Please insert a path according to the following format\nlocalhost:' + str(PORT) + '/<file_name.ext>'
-                    clientConnection.sendall(buildMessageWithStandartHeader(message))
+                    clientConnection.sendall(buildErrorMessage(message))
                     continue
                 try:
                     file = open(fileName, 'rb')
                     fileSize = len(file.read())
                     file.close()
-                    clientConnection.sendall(buildResponse(fileName))
+                    clientConnection.sendall(buildHeadersForDownload(fileName))
 
                     f = open(fileName,'rb')
                     content = f.read()
@@ -49,4 +44,4 @@ if __name__ == "__main__":
 
                 except FileNotFoundError:
                     message = 'File "' + fileName + '" not found in the root of the project'
-                    clientConnection.sendall(buildMessageWithStandartHeader(message))
+                    clientConnection.sendall(buildErrorMessage(message))
