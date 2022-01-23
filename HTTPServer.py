@@ -1,9 +1,10 @@
 import socket
 import threading
 import resource
+from os import path
 
 # PORT < 1024 can require superuser permissions.
-HOST, PORT = '', 8080
+HOST, PORT = '', 8081
 
 H1 = 'HTTP/1.1 '
 HCT = 'Content-Disposition: attachment; filename='
@@ -12,7 +13,7 @@ NOT_FOUND = '404 Not Found'
 BAD_REQUEST = '400 Bad Request'
 OK = '200 OK'
 
-resource.setrlimit(resource.RLIMIT_NOFILE, (4200, 4200))
+resource.setrlimit(resource.RLIMIT_NOFILE, (4096, 4096))
 mutex = threading.Lock()
 
 def buildErrorMessage(message, httpStatus):
@@ -27,19 +28,21 @@ class FileHandler:
 
     @staticmethod
     def openAndSend(fileName, connection):
-        try:
-            mutex.acquire()
-            with open(fileName,'rb') as f:
-                connection.sendall(buildHeadersForDownload(fileName, OK))
+        mutex.acquire()
+        if (mutex.locked):
+            connection.sendall(buildHeadersForDownload(fileName, OK))
+            try:
+                f = open(fileName,'rb')
                 connection.sendfile(f)
+                f.close()
+            except:
+                print('Erro ao abrir arquivo')
+                f.close()
             mutex.release()
-            print('thread finished with success')
-
-        except FileNotFoundError:
-            message = 'File "' + fileName + '" not found in the root of the project'
-            connection.sendall(buildErrorMessage(message, NOT_FOUND))
-            mutex.release()
-            print('thread finished with not found')
+            print(str(threading.get_native_id()) + ' thread finished with success')
+        else:
+            print('Erro no mutex')
+            return
 
 def connectionEstablished(clientConnection):
 
@@ -51,6 +54,10 @@ def connectionEstablished(clientConnection):
                 message = 'Invalid URL. Please insert a path according to the following format\nlocalhost:' + str(PORT) + '/<file_name.ext>'
                 clientConnection.sendall(buildErrorMessage(message, BAD_REQUEST))
                 return
+            if not path.isfile(fileName):
+                message = 'File "' + fileName + '" not found in the root of the project'
+                clientConnection.sendall(buildErrorMessage(message, BAD_REQUEST))
+                return
             
             FileHandler.openAndSend(fileName, clientConnection)
 
@@ -60,6 +67,7 @@ if __name__ == "__main__":
     listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     listenSocket.bind((HOST, PORT))
     listenSocket.listen(4096)
+    print(f'Waiting for connections on port {PORT}')
     threads = list()
 
     while True:
