@@ -4,7 +4,7 @@ import resource
 from os import path
 
 # PORT < 1024 can require superuser permissions.
-HOST, PORT = '', 8081
+HOST = ''
 
 H1 = 'HTTP/1.1 '
 HCT = 'Content-Disposition: attachment; filename='
@@ -39,7 +39,6 @@ class FileHandler:
                 print('Erro ao abrir arquivo')
                 f.close()
             mutex.release()
-            print(str(threading.get_native_id()) + ' thread finished with success')
         else:
             print('Erro no mutex')
             return
@@ -62,6 +61,7 @@ def connectionEstablished(clientConnection):
             FileHandler.openAndSend(fileName, clientConnection)
 
 if __name__ == "__main__":
+    PORT = int(input("Which port? "))
 
     # TCP connection configuration. AF_INET refers to ipv4 and SOCK_STREAM is the TCP connection
     listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
